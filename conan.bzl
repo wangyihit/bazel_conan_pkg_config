@@ -72,8 +72,10 @@ def _pkg_config(ctx, pkg_config_path, pkg_name, args):
 
 def _conan_execute(ctx, pkg_config_path, pkg_name, pkg_version, install_args):
     conan_binary_path = _find_binary(ctx, "conan")
+    conan_version = ctx.attr.conan_version
     args = [ "install", "-g", "pkg_config", "-if", pkg_config_path, "{}/{}@".format(pkg_name, pkg_version) ]
-
+    if ctx.attr.conan_version == "2.0":
+        args = [ "install", "-g", "pkg_config", pkg_config_path, "{}/{}@".format(pkg_name, pkg_version) ]
     args += install_args
 
     _execute(
@@ -160,6 +162,7 @@ conan_dep = repository_rule(
         "conan_install_args": attr.string_list(default = [ "--build=missing" ], doc = "Arguments to append to the invocation to 'conan install'"),
         "version": attr.string(mandatory = True, doc = "Version number"),
         "ignore_opts": attr.string_list(doc = "Ignore listed opts in copts or linkopts."),
+        "conan_version": attr.string(doc = "conan version(1.0/2.0)", 
     },
 
     local = True,
